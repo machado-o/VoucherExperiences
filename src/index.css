@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 38 33% 97%;
+    --foreground: 25 30% 12%;
+
+    --card: 38 30% 99%;
+    --card-foreground: 25 30% 12%;
+
+    --popover: 38 30% 99%;
+    --popover-foreground: 25 30% 12%;
+
+    --primary: 20 55% 48%;
+    --primary-foreground: 38 60% 97%;
+
+    --secondary: 30 25% 92%;
+    --secondary-foreground: 25 30% 20%;
+
+    --muted: 35 20% 94%;
+    --muted-foreground: 25 10% 50%;
+
+    --accent: 25 70% 94%;
+    --accent-foreground: 20 55% 38%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 18% 88%;
+    --input: 30 18% 88%;
+    --ring: 20 55% 48%;
+
+    --radius: 0.75rem;
+
+    --terracotta: 20 55% 48%;
+    --terracotta-light: 25 70% 94%;
+    --terracotta-dark: 20 55% 38%;
+    --cream: 38 33% 97%;
+    --cream-dark: 35 20% 90%;
+    --warm-brown: 25 30% 12%;
+    --gold: 40 70% 55%;
+
+    --sidebar-background: 38 30% 96%;
+    --sidebar-foreground: 25 30% 20%;
+    --sidebar-primary: 20 55% 48%;
+    --sidebar-primary-foreground: 38 60% 97%;
+    --sidebar-accent: 25 70% 94%;
+    --sidebar-accent-foreground: 20 55% 38%;
+    --sidebar-border: 30 18% 88%;
+    --sidebar-ring: 20 55% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
