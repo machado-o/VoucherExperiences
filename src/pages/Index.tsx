@@ -152,7 +152,7 @@ export default function Index() {
       {/* DIFERENCIAIS */}
       <section className="bg-accent py-16">
         <div className="container">
-          <h2 className="text-3xl font-serif text-center mb-10">Por que a Vivência?</h2>
+          <h2 className="text-3xl font-serif text-center mb-10">Por que a Voucher Experiences?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: Zap, title: "Entrega Instantânea", desc: "Voucher digital enviado imediatamente. Perfeito para presentes de última hora." },
