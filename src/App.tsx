@@ -11,6 +11,7 @@ import Produto from "./pages/Produto";
 import Checkout from "./pages/Checkout";
 import Parceiros from "./pages/Parceiros";
 import MinhaConta from "./pages/MinhaConta";
+import PainelParceiro from "./pages/PainelParceiro";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/checkout/:id" element={<Checkout />} />
           <Route path="/parceiros" element={<Parceiros />} />
           <Route path="/minha-conta" element={<MinhaConta />} />
+          <Route path="/painel-parceiro" element={<PainelParceiro />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

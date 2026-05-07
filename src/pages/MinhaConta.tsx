@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Ticket, History, User, Heart, LogOut } from "lucide-react";
+import { Ticket, History, User, Heart, LogOut, QrCode, ChevronDown, ChevronUp } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -11,9 +12,9 @@ const menuItems = [
 ];
 
 const mockVouchers = [
-  { id: 1, name: "Jantar às Cegas", status: "Ativo", expiry: "15/09/2026", price: "R$ 289" },
-  { id: 2, name: "Spa Day Premium", status: "Ativo", expiry: "20/08/2026", price: "R$ 420" },
-  { id: 3, name: "Aula de Surfe", status: "A expirar", expiry: "10/05/2026", price: "R$ 129" },
+  { id: 1, code: "VCH-JNTR01", name: "Jantar às Cegas", status: "Ativo", expiry: "15/09/2026", price: "R$ 289" },
+  { id: 2, code: "VCH-SPA02X", name: "Spa Day Premium", status: "Ativo", expiry: "20/08/2026", price: "R$ 420" },
+  { id: 3, code: "VCH-SRF03Y", name: "Aula de Surfe", status: "A expirar", expiry: "10/05/2026", price: "R$ 129" },
 ];
 
 const mockHistory = [
@@ -24,6 +25,7 @@ const mockHistory = [
 
 export default function MinhaConta() {
   const [active, setActive] = useState("vouchers");
+  const [expandedVoucher, setExpandedVoucher] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -84,19 +86,56 @@ export default function MinhaConta() {
                 <h2 className="font-serif text-xl mb-4">Meus Vouchers Ativos</h2>
                 <div className="space-y-3">
                   {mockVouchers.map((v) => (
-                    <div key={v.id} className="flex items-center justify-between bg-card rounded-xl border border-border p-4">
-                      <div>
-                        <h3 className="font-medium text-sm">{v.name}</h3>
-                        <p className="text-xs text-muted-foreground">Expira em: {v.expiry} · {v.price}</p>
+                    <div key={v.id} className="bg-card rounded-xl border border-border overflow-hidden">
+                      <div className="flex items-center justify-between p-4">
+                        <div>
+                          <h3 className="font-medium text-sm">{v.name}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            Expira em: {v.expiry} · {v.price}
+                          </p>
+                          <p className="text-xs font-mono text-primary mt-0.5">{v.code}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            v.status === "A expirar"
+                              ? "bg-destructive/10 text-destructive"
+                              : "bg-accent text-accent-foreground"
+                          }`}>
+                            {v.status}
+                          </span>
+                          <button
+                            onClick={() => setExpandedVoucher(expandedVoucher === v.id ? null : v.id)}
+                            className="flex items-center gap-1 text-xs text-primary border border-primary/30 px-3 py-2 rounded-lg hover:bg-accent transition-colors"
+                          >
+                            <QrCode className="w-3 h-3" />
+                            QR Code
+                            {expandedVoucher === v.id
+                              ? <ChevronUp className="w-3 h-3" />
+                              : <ChevronDown className="w-3 h-3" />
+                            }
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className={`text-xs px-2 py-1 rounded-full ${v.status === "A expirar" ? "bg-destructive/10 text-destructive" : "bg-accent text-accent-foreground"}`}>
-                          {v.status}
-                        </span>
-                        <button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-xs font-medium hover:bg-terracotta-dark transition-colors">
-                          Resgatar
-                        </button>
-                      </div>
+
+                      {expandedVoucher === v.id && (
+                        <div className="border-t border-border bg-secondary/40 p-4 flex items-center gap-6">
+                          <QRCodeSVG
+                            value={`https://machado-o.github.io/VoucherExperiences/resgatar/${v.code}`}
+                            size={120}
+                            bgColor="transparent"
+                            fgColor="#000000"
+                            level="M"
+                          />
+                          <div className="text-sm space-y-1">
+                            <p className="font-medium">{v.name}</p>
+                            <p className="font-mono font-bold text-primary">{v.code}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Apresente este QR Code no local da experiência para resgatar seu voucher.
+                            </p>
+                            <p className="text-xs text-muted-foreground">Expira em: {v.expiry}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

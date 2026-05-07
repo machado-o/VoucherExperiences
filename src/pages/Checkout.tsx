@@ -1,7 +1,8 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Gift, User, CreditCard, CheckCircle, Mail, Phone, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { experiences, categories } from "@/data/experiences";
@@ -29,14 +30,14 @@ type PaymentMethod = "pix" | "cartao" | "boleto";
 
 export default function Checkout() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const experience = experiences.find((e) => e.id === id);
 
   const [recipientType, setRecipientType] = useState<RecipientType>("outro");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [step, setStep] = useState(1);
+  const [finalized, setFinalized] = useState(false);
+  const [voucherCode, setVoucherCode] = useState("");
 
-  // Form state
   const [buyerName, setBuyerName] = useState("");
   const [buyerEmail, setBuyerEmail] = useState("");
   const [buyerPhone, setBuyerPhone] = useState("");
@@ -60,23 +61,93 @@ export default function Checkout() {
   }
 
   const img = experience.image || categoryImages[experience.category];
+  const deliveryEmail = recipientType === "eu" ? buyerEmail : recipientEmail;
 
   const canAdvanceStep1 = buyerName && buyerEmail && buyerPhone &&
     (recipientType === "eu" || (recipientName && recipientEmail));
 
   const handleFinalize = () => {
-    toast.success("Pedido realizado com sucesso! 🎉", {
-      description: "Você receberá os detalhes do voucher por e-mail.",
-    });
-    setTimeout(() => navigate("/minha-conta"), 2000);
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const code = "VCH-" + Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    setVoucherCode(code);
+    setFinalized(true);
+    toast.success("Pedido realizado com sucesso!");
   };
+
+  if (finalized) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="container py-12 flex-1 flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md w-full"
+          >
+            <Card>
+              <CardContent className="p-8 text-center space-y-6">
+                <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-primary" />
+                </div>
+
+                <div>
+                  <h1 className="font-serif text-2xl mb-2">Voucher Gerado!</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Enviado para <strong>{deliveryEmail || buyerEmail}</strong>
+                  </p>
+                </div>
+
+                <div className="bg-secondary rounded-xl p-6 space-y-4">
+                  <div className="flex justify-center">
+                    <QRCodeSVG
+                      value={`https://machado-o.github.io/VoucherExperiences/resgatar/${voucherCode}`}
+                      size={180}
+                      bgColor="transparent"
+                      fgColor="#000000"
+                      level="M"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Código do Voucher</p>
+                    <p className="font-mono font-bold text-xl tracking-widest text-primary">{voucherCode}</p>
+                  </div>
+                  <div className="border-t border-border pt-3 text-sm space-y-1 text-left">
+                    <p className="font-medium">{experience.name}</p>
+                    <p className="text-muted-foreground">
+                      {experience.city} · Válido por {experience.validity} meses
+                    </p>
+                    <p className="text-muted-foreground">
+                      {recipientType === "outro" ? `Presenteado: ${recipientName}` : `Titular: ${buyerName}`}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Apresente este QR Code no local da experiência para resgatar seu voucher.
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  <Link to="/minha-conta">
+                    <Button className="w-full">Ver Meus Vouchers</Button>
+                  </Link>
+                  <Link to="/catalogo">
+                    <Button variant="outline" className="w-full">Explorar Mais Experiências</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
       <div className="container py-6 flex-1">
-        {/* Breadcrumb */}
         <div className="text-sm text-muted-foreground mb-4">
           <Link to="/" className="hover:text-primary">Home</Link> ›{" "}
           <Link to="/catalogo" className="hover:text-primary">Catálogo</Link> ›{" "}
@@ -110,7 +181,6 @@ export default function Checkout() {
           <div className="lg:col-span-2 space-y-6">
             {step === 1 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                {/* Buyer info */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg font-serif">
@@ -135,7 +205,6 @@ export default function Checkout() {
                   </CardContent>
                 </Card>
 
-                {/* Recipient */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg font-serif">
@@ -309,7 +378,7 @@ export default function Checkout() {
             )}
           </div>
 
-          {/* Sidebar - order summary */}
+          {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <Card>

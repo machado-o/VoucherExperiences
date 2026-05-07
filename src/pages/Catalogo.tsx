@@ -16,6 +16,7 @@ export default function Catalogo() {
   const [selectedCats, setSelectedCats] = useState<Category[]>(initialCat ? [initialCat] : []);
   const [selectedCity, setSelectedCity] = useState("");
   const [sortBy, setSortBy] = useState<"relevance" | "price-asc" | "price-desc">("relevance");
+  const [minRating, setMinRating] = useState(0);
 
   const toggleCat = (cat: Category) => {
     setSelectedCats((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
@@ -26,12 +27,13 @@ export default function Catalogo() {
       if (search && !e.name.toLowerCase().includes(search.toLowerCase()) && !e.city.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedCats.length > 0 && !selectedCats.includes(e.category)) return false;
       if (selectedCity && e.city !== selectedCity) return false;
+      if (minRating > 0 && e.rating < minRating) return false;
       return true;
     });
     if (sortBy === "price-asc") result = [...result].sort((a, b) => a.price - b.price);
     if (sortBy === "price-desc") result = [...result].sort((a, b) => b.price - a.price);
     return result;
-  }, [search, selectedCats, selectedCity, sortBy]);
+  }, [search, selectedCats, selectedCity, sortBy, minRating]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -100,6 +102,20 @@ export default function Catalogo() {
                 <option value="relevance">Relevância</option>
                 <option value="price-asc">Menor Preço</option>
                 <option value="price-desc">Maior Preço</option>
+              </select>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold mb-3">Avaliação Mínima</h3>
+              <select
+                value={minRating}
+                onChange={(e) => setMinRating(Number(e.target.value))}
+                className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+              >
+                <option value={0}>Todas</option>
+                <option value={4.5}>4.5+ ★</option>
+                <option value={4.0}>4.0+ ★</option>
+                <option value={3.5}>3.5+ ★</option>
               </select>
             </div>
           </aside>

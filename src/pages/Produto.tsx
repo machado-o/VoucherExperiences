@@ -38,7 +38,9 @@ export default function Produto() {
   }
 
   const img = experience.image || categoryImages[experience.category];
-  const related = experiences.filter((e) => e.category === experience.category && e.id !== experience.id).slice(0, 4);
+  const sameCategory = experiences.filter((e) => e.category === experience.category && e.id !== experience.id).slice(0, 2);
+  const crossCategory = experiences.filter((e) => e.category !== experience.category).slice(0, 2);
+  const related = [...sameCategory, ...crossCategory];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -127,7 +129,7 @@ export default function Produto() {
         {/* RELACIONADAS */}
         {related.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-serif mb-6">Experiências Relacionadas</h2>
+            <h2 className="text-2xl font-serif mb-6">Você Também Pode Gostar</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {related.map((exp) => (
                 <ExperienceCard key={exp.id} experience={exp} />

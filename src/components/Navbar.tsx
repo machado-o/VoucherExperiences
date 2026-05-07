@@ -7,6 +7,7 @@ const navItems = [
   { label: "Categorias", path: "/categorias" },
   { label: "Catálogo", path: "/catalogo" },
   { label: "Parceiros", path: "/parceiros" },
+  { label: "Área do Parceiro", path: "/painel-parceiro" },
 ];
 
 export default function Navbar() {
